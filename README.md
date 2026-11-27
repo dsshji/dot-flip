@@ -11,6 +11,13 @@ jumping from one frequency to another --> pen that draws across the board (both 
 
 thickness depends on lowness, length on the velocity, positioning on the frequency
 
+DS1 switches [4, 3, 1, 2] 
+(top to bottom)
+B1 OFF OFF ON OFF OFF OFF OFF OFF
+B2 ON ON OFF OFF OFF OFF OFF OFF
+B3 ON OFF OFF OFF OFF OFF OFF OFF
+B4 OFF ON OFF OFF OFF OFF OFF OFF
+
 sound files (Persona Playlist):
 - [Rivers In The Desert (Persona 5)](https://onlinesequencer.net/3984214#)
 - [It's Going Down Now (Persona 3 Reload)](https://onlinesequencer.net/3966309) 
