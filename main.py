@@ -4,7 +4,8 @@ import time
 
 from pen import Pen, STRIKE_HOLD, LINE_HOLD
 from songs import load_playlist
-from preview import show  # swap for the real board
+from board import show  # swap for the real board
+import sound
 
 NUM_ROWS = 28
 NUM_COLS = 28
@@ -48,6 +49,7 @@ def start_song(i):
     song = songs[i]
 
     lap_seconds = BARS_PER_LAP * 4 * 60 / song.bpm
+    sound.all_off()
     pen.reset()
     pen.speed = min(NUM_COLS / lap_seconds, BOARD_FPS)
 
@@ -65,6 +67,9 @@ def tick():
     pen.begin_frame(elapsed)
     p = pen.col(elapsed)
 
+    for n in active_notes:
+        if n["end_time"] <= elapsed:
+            sound.note_off(n["pitch"], n["channel"])
     active_notes = [n for n in active_notes if n["end_time"] > elapsed]
 
     # skip long silences
@@ -81,13 +86,14 @@ def tick():
         lowness = row / (NUM_ROWS - 1)
         note = {
             "row": row,
+            "pitch": nd.number,
+            "channel": sound.note_on(nd.number, nd.velocity, nd.program, nd.is_drum),
             "velocity": nd.velocity,
             "end_time": elapsed + nd.duration,
             "thick": 1 + js_round((MAX_ROWS - 1) * lowness * lowness),
         }
         active_notes.append(note)
         new_notes.append(note)
-        # TODO sound: play nd here
         next_note += 1
 
     # STRIKE + CONNECTOR for new notes
@@ -132,6 +138,7 @@ def main():
     if not songs:
         raise SystemExit("no songs loaded - check the music/ folder")
 
+    sound.open_output()
     start_song(0)
     frame = 1 / BOARD_FPS
     try:
@@ -141,6 +148,8 @@ def main():
             time.sleep(max(0, frame - (time.monotonic() - frame_start)))
     except KeyboardInterrupt:      # Ctrl+C to stop
         print("stopped")
+    finally:
+        sound.close()
 
 
 if __name__ == "__main__":

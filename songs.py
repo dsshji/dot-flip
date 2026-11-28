@@ -27,6 +27,8 @@ class Note:
     start: float
     duration: float
     velocity: float
+    program: int = 0       # General MIDI instrument
+    is_drum: bool = False
 
 
 @dataclass
@@ -46,12 +48,14 @@ def load_song(path):
     midi = pretty_midi.PrettyMIDI(str(path))
     notes = []
     for inst in midi.instruments:
-        for n in sorted(inst.notes, key=lambda n: n.start):
+        for n in inst.notes:
             notes.append(Note(int(n.pitch), float(n.start),
-                              float(n.end - n.start), n.velocity / 127))
+                              float(n.end - n.start), n.velocity / 127,
+                              int(inst.program), bool(inst.is_drum)))
 
     if not notes:
         raise ValueError("no notes")
+    notes.sort(key=lambda n: n.start)
 
     _, tempos = midi.get_tempo_changes()
     bpm = float(tempos[0]) if len(tempos) else 120.0

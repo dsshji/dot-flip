@@ -31,3 +31,12 @@ sound files (Persona Playlist):
 - [Pull The Trigger (Persona Q2_ New Cinema Labyrinth)](https://onlinesequencer.net/4317522#) 
 - [Take Over (Persona 5 Royal)](https://onlinesequencer.net/4086750#)
 - [Wake Up, Get Up, Get Out There (Persona 5)](https://onlinesequencer.net/4040829#)
+
+
+IT WORKSSSSSSSSSSSSSS
+add troubleshooting for bord being plugged / unplugged
+
+TODO:
+- plug / unplug code handling (start from the last started song + add tracking of songs)
+- RPi connect (Raspberry Pi 3 B+)
+- how to play audio on Rpi?
