@@ -40,3 +40,7 @@ TODO:
 - plug / unplug code handling (start from the last started song + add tracking of songs)
 - RPi connect (Raspberry Pi 3 B+)
 - how to play audio on Rpi?
+- aux cable to RPi + speaker; RPi microSD card + laptop code
+
+sound.py is done by Claude to play notes on Windows / Linux
+else is me

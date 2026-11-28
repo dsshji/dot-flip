@@ -1,10 +1,11 @@
 # songs -> pen -> display
 import math
 import time
+from pathlib import Path
 
 from pen import Pen, STRIKE_HOLD, LINE_HOLD
 from songs import load_playlist
-from board import show  # swap for the real board
+import board            # or: import preview as board  (no hardware)
 import sound
 
 NUM_ROWS = 28
@@ -20,6 +21,9 @@ PAUSE_MAX = 1.0
 SWOOSH_TIME = 1.5
 SWOOSH_HOLD = 0.15
 SONG_GAP = 4
+
+# remembers which song was playing, so a restart picks up there
+STATE_FILE = Path(__file__).resolve().parent / "last_song.txt"
 
 pen = Pen(NUM_ROWS, NUM_COLS, DISC_BUDGET)
 
@@ -43,9 +47,24 @@ def js_round(x):
     return math.floor(x + 0.5)
 
 
+def save_song_index(i):
+    try:
+        STATE_FILE.write_text(str(i))
+    except OSError:
+        pass
+
+
+def load_song_index():
+    try:
+        return int(STATE_FILE.read_text()) % len(songs)
+    except (OSError, ValueError):
+        return 0
+
+
 def start_song(i):
     global song, song_index, next_note, active_notes, last_note, song_ended_at, start_time
     song_index = i
+    save_song_index(i)
     song = songs[i]
 
     lap_seconds = BARS_PER_LAP * 4 * 60 / song.bpm
@@ -113,7 +132,7 @@ def tick():
     for n in sorted(active_notes, key=lambda n: n["velocity"], reverse=True):
         pen.mark_thick(n["row"], p, n["end_time"], n["thick"])
 
-    # END OF SONG: rest, then swoosh, then next song
+    # END OF SONG rest, then swoosh, then next song
     if next_note >= len(song.notes) and not active_notes:
         if song_ended_at is None:
             song_ended_at = elapsed
@@ -129,7 +148,7 @@ def tick():
         if t > SONG_GAP:
             start_song((song_index + 1) % len(songs))
 
-    show(pen)
+    board.show(pen)
 
 
 def main():
@@ -139,7 +158,7 @@ def main():
         raise SystemExit("no songs loaded - check the music/ folder")
 
     sound.open_output()
-    start_song(0)
+    start_song(load_song_index())
     frame = 1 / BOARD_FPS
     try:
         while True:
@@ -150,6 +169,7 @@ def main():
         print("stopped")
     finally:
         sound.close()
+        board.close()
 
 
 if __name__ == "__main__":

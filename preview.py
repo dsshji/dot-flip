@@ -19,3 +19,6 @@ def show(pen):
     sys.stdout.write("\n".join(lines) + "\n")
     sys.stdout.flush()
     _first_frame = False
+
+def close():
+    pass

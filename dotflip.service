@@ -1,0 +1,22 @@
+# Starts the piece on boot and restarts it if it crashes (e.g. USB unplugged).
+# If your Pi username isn't "dasha", change it in the 3 places below.
+# Install on the Pi:
+#   sudo cp dotflip.service /etc/systemd/system/
+#   sudo systemctl enable --now dotflip
+# Watch it:   journalctl -u dotflip -f
+# Stop it:    sudo systemctl stop dotflip
+
+[Unit]
+Description=dot flip
+After=sound.target
+StartLimitIntervalSec=0
+
+[Service]
+User=dasha
+WorkingDirectory=/home/dasha/dot-flip
+ExecStart=/home/dasha/dot-flip/.venv/bin/python -u main.py
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
